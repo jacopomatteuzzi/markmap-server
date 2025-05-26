@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Transformer } = require('markmap-lib');
-const { getMarkmapSVG } = require('markmap-cli/lib/serve');
+const { Transformer, Markmap } = require('markmap-lib');
 
 const app = express();
 app.use(cors());
@@ -11,7 +10,11 @@ app.post('/api/markmap-svg', async (req, res) => {
   const md = req.body.md || '';
   const transformer = new Transformer();
   const { root, features } = transformer.transform(md);
-  const svg = getMarkmapSVG(root, { features });
+
+  // Genera SVG direttamente con Markmap
+  const markmap = Markmap.create(null, null, root);
+  const svg = markmap.svg();
+
   res.set('Content-Type', 'image/svg+xml');
   res.send(svg);
 });
